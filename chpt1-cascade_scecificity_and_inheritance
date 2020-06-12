@@ -1,0 +1,142 @@
+# Chapter 1: Cascade, specificity, and inheritance
+
+# The Cascade
+- The cascade is the mechanism by which the browser resolves conflicting
+  declarations, with each property of each element being handled independently.
+- When declarations conflict, the cascade considers the following three things in
+  ascending order to resolve the difference:
+  1. Stylesheet origin - Where the styles come from. Your styles are applied in
+     conjuction with the browser's default styles.
+  2. Selector specificity - Which selectors take precedence over which.
+  3. Source order - Order in which styles are declared in the stylesheet.
+
+## Understanding stylesheet origin
+- In addition to the styles you supply (author styles) there are also user agent
+  styles which are the browser's defaults. Author styles have a higher priority
+  and so will override user styles when present.
+- It's also possible to mark declarations as !important, which gives them a higher
+  priority origin than other author styles. e.g.
+
+    color: red !important;
+
+- The order of priority of origins can be summarised in descending order as:
+  1. Author important
+  2. Author
+  3. User agent
+
+## Understanding specificity
+- Inline style declarations found in the "style" attribute of an HTML element are
+  scoped and apply only to that element. They override any styles from your style-
+  sheet, except those marked !important.
+- Within a stylesheet declarations are chosen according to the specificity of their
+  selectors. The rules of specificy are as follows:
+  - If a selector has more IDs, it wins.
+  - In the case of a tie, the selector with the most classes wins.
+  - In the case of a tie, the selector with the most tag names wins.
+- Pseudo-class selectors (e.g :hover) and attribute selectors (e.g. [type="input"])
+  each have the same specificity as a class selector.
+- The universal selector (*) and combinators (>, +, ~) have no effect on
+  specificity.
+- A convenient notation for specificity that allows easy comparison is the three
+  numbers separated by commas, where the first number represents the number of IDs,
+  the second the number of classes, and the third the number of tags. e.g. 1,2,2
+- It is generally better to keep specificity lower where you can, so you have more
+  options for overriding rules in the future. This should mean avoiding the use of
+  IDs in selectors.
+
+## Understanding source order
+- Where selectors have the same specificity, the one appearing later in the style-
+  sheet will be chosen.
+- When defining link styles it is important to ensure rules are listed in the
+  correct order, as each of the pseudo-classes has the same level of specificity.
+  e.g.
+
+    a:link {
+      color: blue;
+      text-decoration: none;
+    }
+
+    a:visited {
+      color: purple;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    a:active {
+      color: red;
+    }
+
+- The declaration that "wins" the cascade is often referred to as the cascaded
+  value.
+
+# Inheritance
+- Another way an element can receive a style is through inheritance. For certain
+  properties inheritance occurs by default. These primarily pertain to text, such
+  as color, font, font-family, text-align, etc, but there are also other properties
+  that can be inherited such as list-style relating to lists, and border-collapse
+  and border-spacing relating to tables.
+- Setting a property like font-family for the body tag will set this property for
+  all other elements in the page (unless overridden) due to inheritance. This can
+  be a useful means by which to set a base style for the whole page.
+
+# Special values
+- There are two special values that can be applied to any property to help
+  manipulate the cascade, namely: inherit and initial.
+
+## Using the inherit keyword
+- The inherit keyword can be used to explicity override another declaration and
+  instead inherit the property value from the parent. e.g
+
+    a:link {
+      color: blue;
+    }
+    ...
+    .footer {
+      color: #666;
+      background-color: #ccc;
+      padding: 15px 0;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .footer a {
+      color: inherit;
+      text-decoration: underline;
+    }
+
+  - Here the color of anchor elements in the footer has been set to inherit,
+    overriding the global setting of blue.
+
+## Using the initial keyword
+- The keyword initial can be used to reset a property to its default value.
+
+# Shorthand properties
+- Shorthand properties let you set the values of several other properties at one
+  time. For example, font lets you set font-style, font-weight, font-size, line-
+  height, and font-family. e.g.
+
+    font: italic bold 18px/1.2 "Helvetica", "Arial", sans-serif;
+
+- If you omit certain values when using a shorthand property it's important to know
+  that these values will be implicitly set to their initial value. This can silently
+  override styles you specify elsewhere. e.g.
+
+    h1 {
+      font-weight: bold;
+    }
+
+    .title {
+      font: 32px Helvetica, Arial, sans-serif;
+    }
+
+  - Here the font-weight will be "normal" as the "bold" setting is implicitly
+    overridden.
+
+- Shorthand properties such as padding or margin allow you to define the values for
+  all four sides of the element at once. These values proceed clockwise from the
+  top - top, right, bottom, left. If only three values are provided, the left side
+  assumes the second value: top, right/left, bottom. If only two values are
+  provided, the bottom assumes the first value: top/bottom, right/left. If a single
+  value is provided, it is applied to all four sides.
