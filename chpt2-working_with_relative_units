@@ -1,0 +1,193 @@
+# Chapter 2: Working with relative units
+
+# Responsive units
+- There are two types of units that can be used with CSS properties: absolute units
+  and relative units. The former remains constant even as external factors such as
+  screen or font size change, while the latter is subject to these external factors
+  and will change dynamically as they change.
+- In the modern age of web development, it is essential for websites to be
+  responsive to the different media on which they will be displayed. Relative units
+  can serve a tool in achieving this goal.
+
+# Ems and rems
+- 1em means the font size of the current element; its exact value varies depending
+  on the element you're applying it to.
+- Ems are particularly useful for padding and margin values as they allow you to
+  scale the space around the text proportionately as the font-size varies. e.g.
+
+    .padded {
+      font-size: 16px;
+      padding: 1em;
+    }
+
+  - Here the padding will equal the font-size of 16px.
+- If you use ems to specify a font-size the value will be computed relative to the
+  inherited font-size. This can cause issues when nesting several of the same
+  element as the font-size value will be compounded, resulting in shrinking values
+  if the font-size is less than 1em and growing values if it is greater than 1em.
+  e.g.
+
+    body {
+      font-size: 16px;
+    }
+
+    ul {
+      font-size: .8em;
+    }
+    ...
+
+    <ul>
+      <li>Top level
+        <ul>
+          <li>Second level
+            <ul>
+              <li>Third level</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+  - Here the nested list elements will recursively get smaller as the inherited
+    font-size is multiplied by 0.8 for each <ul> element.
+- Rems are very similar to ems with the difference that their value is computed from
+  the font-size of the root node, rather than the inherited font-size. This makes
+  them a better choice of unit for font-size as the computed value will be
+  unaffected by nesting.
+- The properties of the root node can be targeted using the :root pseudo-class e.g.
+
+    :root {
+      font-size: 1em;
+    }
+
+    ul {
+      font-size: .8rem;
+    }
+
+  - When ems are used to set the :root font-size, the value is computed relative to
+    the browser's default font-size, which is usually 16px.
+- @media queries can be used in combination with a :root font-size to add
+  responsivity to a page. e.g.
+
+    :root {
+      font-size: 0.75em;
+    } 
+
+    @media (min-width: 800px) {
+      :root {
+        font-size: 0.875em;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      :root {
+        font-size: 1em;
+      }
+    }
+
+  - Here the root font-size is initially set to 0.75em, but this value is overridden
+    when the screen width exceeds 800px and then again when it exceeds 1200px.
+  - Any element whose font-size is defined in units of rems will automatically
+    adjust as the screen size changes, and likewise any other properties defined in
+    terms of ems such as padding or margin.
+
+# Viewport-relative units
+- The 4 viewport-relative units can be defined as follows:
+  - vh - 1/100th of the viewport height.
+  - vw - 1/100th of the viewport width.
+  - vmin - 1/100th of the smaller dimension, height or width.
+  - vmax - 1/100th of the larger dimension, height or width.
+- These units can be used to ensure that an element always fits inside a viewport
+  no matter how the size of the viewport changes. e.g.
+
+    .square {
+      width: 90vmin;
+      height: 90vmin;
+      background-color: #369;
+    }
+
+  - This ruleset can be used to define a square element that will always fit in
+    the viewport no matter the screen size of orientation, due to the use of vmin.
+- vw or vh can be useful units for setting font-size since they will allow the text
+  to scale with the screen size without needing to use @media queries. The changes
+  will also be continuous, rather than jumping at discrete thresholds.
+- Setting the font-size using purely viewport-relative units will result in values
+  that are either too small or too big at the extremes of screen size, and so it is
+  better to use them in combination with a baseline value in a calc() function. e.g.
+
+    :root {
+      font-size: calc(0.5em +1vw);
+    }
+
+# Unitless numbers and line-height
+- Some properties allow for unitless values (numbers with no specific unit). These
+  include line-height, z-index, and font-weight.
+- Using unitless values for line-height can prevent line overlaps that could other-
+  wise occur if relative values are also used for the font-size of an element. e.g.
+
+    body {
+      line-height: 1.2;
+    }
+
+    .about-us {
+      font-size: 2em;
+    }
+
+  - In this example, the local font-size will first be calculated and then the
+    line-height will be calculated from this (1.2 x (2 x 16px) = 38.4px).
+  - If the line-height were to have been defined in ems, the inherited value would
+    have been 1.2 x 16px = 19.2px, which is less than the font-size and so the lines
+    would overlap.
+
+# Custom properties (aka CSS variables)
+- Custom properties are defined using a preceding "--" to distinguish them from
+  regular properties. They can then be assigned as values for other properties
+  using the var() function. e.g.
+
+    :root {
+      --main-font: Helvetica, Arial, sans-serif;
+    }
+
+    p {
+      font-family: var(--main-font);
+    }
+
+- Custom properties let you define a value in one place, as a "single source of
+  truth", and reuse that value throughout the stylesheet. This is particularly
+  useful for recurring values like colors.
+- The var() function accepts a second parameter, which specifies a fallback value.
+  If the variable specified in the first parameter is not defined, then the second
+  value is used instead. e.g.
+
+    p {
+      color: var(--secondary-color, blue);
+    }
+
+- Custom properties can be defined in any element, with the value being scoped to
+  that element and its descendents. This means you can effect style changes in
+  localised regions of the stylesheet by simply redefining a variable defined higher
+  up the inheritance tree. e.g.
+
+    :root {
+      --main-bg: #fff;
+      --main-color: #000;
+    }
+
+    .panel {
+      background-color: var(--main-bg);
+      color: var(--main-color);
+    }
+
+    .dark {
+      --main-bg: #000;
+      --main-color: #fff;
+    }
+
+  - In this example, elements with the .panel class will have a white background
+    with black text, unless an element above them has the .dark class, in which case
+    the colors will be reversed. 
+- You can also redefine variables using JavaScript, allowing for dynamic style
+  changes in response to events. e.g.
+
+    var rootElement = document.documentElement;
+    rootElement.style.setProperty('--main-bg', '#cdf');
