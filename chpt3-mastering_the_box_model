@@ -1,0 +1,71 @@
+# Chapter 3: Mastering the box model
+
+# Achieving desired width and height
+- When defining element widths in units of percentage, it's a good idea to ensure
+  box-sizing property is set to border-box rather than the content-box default. This
+  is because with the content-box setting the width won't include any padding or
+  border, resulting in the elements not fitting in the viewport width.
+- A good method for universally setting the box-sizing property to border-box is
+  the following:
+
+    :root {
+      box-sizing: border-box;
+    }
+
+    *,
+    ::before,
+    ::after {
+      box-sizing: inherit;
+    }
+
+  - The advantage of this approach over using the * selector directly is that it
+    allows you to easily override the box-sizing of a group of elements by changing
+    setting it for their parent. This is particularly useful for third-party
+    components that rely on content-box.
+- It's better not to set container heights explicitly, rather you should allow their
+  height to be determined naturally from their contents. This makes the page more
+  flexible and is one way of handling overflow.
+- Percentages for height can be problematic if the parent does not have an
+  explicitly defined height, so in cases where you want to fill the viewport height
+  it's better to use units of vh.
+- Achieving columns of equal height has traditionally been achieved using CSS table,
+  but in modern times it's easier and more flexible to use flexbox or grids. Flexbox
+  also allows for easy vertical centering of components, which has traditionally
+  been difficult to achieve.
+
+# Negative margins
+- Unlike padding and border width, it's possible to assign negative values to
+  margins. The result depends on to which margin the negative value is assigned: for
+  the left and top margins, a negative value results in the component being pulled
+  leftward or upward so it overlaps the preceding element; for the right and bottom
+  margins, the succeeding element is pulled leftward or upward so they overlap the
+  current element.
+
+# Collapsed margins
+- By default margins between vertically adjoining elements will collapse down to a
+  single margin matching the maximum of the two.
+- These elements don't have to be adjacent sibilings, for example, the margin of a
+  <p> wrapped in a <div> preceeded by an <h2> will collapse with the margin of the
+  <h2> element if the <div> doesn't have any padding. e.g.
+
+    <h2>Come join us!</h2>
+    <div>
+      <p>
+        ...
+      </p>
+    </div>
+
+  - The margins of the <h2>, <div> and <p> all collapse down to equal the largest
+    value.
+- This collapse of consecutive margins can be undesirable if the container (<div>)
+  has a background, as it will only be should behind the contents and not the margin
+  of the content.
+- To prevent margins collapsing you can do a number of things:
+  - Apply overflow: auto (or any value other than visible) to the container as this
+    prevents the margins inside the container collapsing with those outside the
+    container.
+  - Add a border or padding between the two margins.
+  - Margins won't collapse to the outside of a container that it floated, that is an
+    inline block, or that has an absolute or fixed position.
+  - Use flexbox or grid, as this prevents collapse of margins between elements that
+    are part of the flex layout.
