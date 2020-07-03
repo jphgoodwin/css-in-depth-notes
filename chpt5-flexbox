@@ -1,0 +1,110 @@
+# Chapter 5 - Flexbox
+
+# Flexbox principles
+- Flexbox is a new method for laying out elements on the page. It's more predictable
+  and offers far more specific control than floats. It's also a simple solution to
+  the long-standing problems of vertical centering and equal height columns.
+- Applying display: flex; to an element turns it into a flex container, and its
+  direct children turn into flex items. By default, flex items align side by side,
+  left to right, all in one row. The flex container fills the available width like
+  a block element, but the flex items may not necessarily fill the width of their
+  container. The flex items are all the same height, determined naturally by their
+  contents.
+- Flexbox is unlike previous display values, which only affect the elements they're
+  applied to. Instead, a flex container asserts control over the layout of the
+  elements within.
+- The items are placed along a line called the main axis, which goes from the main-
+  start (left) to the main-end (right). Perpendicular to the main axis is the cross-
+  axis. This goes from the cross-start (top) to the cross-end (bottom). The
+  direction of these axes can be changed using the "flex-direction" property.
+
+# Adding spacing between flex items
+- Spacing between the flex items can be achieved by simply using margins.
+- In a scenario where you want some of your items to be left-aligned and some to be
+  right-aligned (in a nav bar for instance), you can set fixed margins for all flex
+  items except the first one on the right, which will have a margin value of "auto".
+  The margin set to "auto" will expand to fill the remaining space in the flex
+  container. e.g.
+
+    .site-nav > li + li {
+      margin-left: 1.5em;
+    }
+
+    .site-nav > .nav-right {
+      margin-left: auto;
+    }
+
+- If you just want to evenly space the items, you can use the justify-content
+  property in the flex container with a value of space-between or space-around to
+  your preference.
+
+# Flex item sizes
+- The flex property can be used to control the size of flex items along the main
+  axis. It is actually a shorthand for flex-grow, flex-shrink, and flex-basis, but
+  is more commonly used as it sets good defaults for the values not specified.
+- The flex-basis property specifies the starting size of the items, which then
+  grow or shrink at rates determined by the flex-grow and flex-shrink values to fill
+  the flex container. The flex-basis can be set to any value that would apply to
+  width, including values in px, ems, and percentages. The initial value is "auto",
+  which means the browser will determine the element's size from its width property
+  and/or the size of its contents. Any flex-basis value set will override these
+  values.
+- flex-grow determines the rate at which an element expands to fill the remaining
+  space after the total flex-basis of all flex-items has been subtracted from the
+  flex container size.
+- flex-grow determines the rate at which an element shrinks to fit in the flex
+  container, if the sum of flex-basis values is greater than the container size.
+- The default values set when values are omitted from the flex property assignment
+  are: 1 1 0%. This means the elements will have size zero to begin with and then
+  grow to fill the flex container by default. Note here that 0% is not the same as
+  the initial value of "auto" for the flex-basis.
+- If flex-grow and flex-shrink values of 0 are used, the item will have a fixed
+  size and not expand or shrink to fill the container.
+- Items will grow and shrink at different rates if they have different flex-grow or
+  flex-shrink values. e.g.
+
+    .column-main {
+      flex: 2;
+    }
+
+    .column-sidebar {
+      flex: 1;
+    }
+
+  - column-main will grow at twice the rate of column-sidebar to fill the container.
+- A point worth noting is that if unequal padding values are applied to different
+  flex items and flex-grow (or flex with just one number) is used to set column
+  widths, the item with the larger padding will be slightly wider than you'd expect
+  as the padding is not considered in the growth calculation.
+- To get a more predictable result, you can specify the size using flex-basis (or
+  flex with a value and units). e.g.
+
+    .column-main {
+      flex: 66.67%;
+    }
+
+    .column-sidebar {
+      flex: 33.33%;
+    }
+
+# Flex direction
+- You can change the direction of the main axis by setting flex-direction to
+  "column", and the direction of the cross axis by appending a "-reverse" (column-
+  reverse, row-reverse). e.g.
+
+    .column-sidebar {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+  - The contents of column-sidebar will descend vertically.
+- When working with a vertical flexbox (column or column-reverse), the same general
+  concepts for row apply, but there's one difference to keep in mind - in CSS,
+  working with height is fundamentally different than working with widths. A flex
+  container will be 100% the available width, but the height is determined naturally
+  by its contents. This behaviour does not change when you rotate the main axis.
+- The flex container's height is determined by its flex items. The will fill it
+  perfectly. In a vertical flexbox, flex-grow and flex-shrink applied to the items
+  will have no effect unless something else forces the height of the flex container
+  to a specific size. That could be the height derived from an outer container.
