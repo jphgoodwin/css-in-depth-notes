@@ -1,0 +1,149 @@
+# Chapter 4: Making sense of floats
+
+# The purpose of floats
+- Floats were originally intended to help position elements (usually images) in a
+  paragraph of text, following a layout commonly used in newspapers and magazines.
+- In the web however, they are much more commonly used in more complex page layouts
+  such as grids. Flexbox and grid have now largely replaced floats in this respect,
+  by prior to their addition to CSS, floats were the only way to achieve such a
+  layout.
+
+# Container collapsing and the clearfix
+- Floats do not contribute to the height of their parent element. This is so the
+  floated element can span multiple paragraphs if it is taller than the text
+  contained within the paragraph. An often unwanted consequence of this behaviour
+  is that the background of the parent element will not extend down to encompass
+  the floated element.
+- To overcome this undesired behaviour, you can add an element after the floats with
+  the companion property "clear" set to "left", "right", or "both" depending on
+  which side the elements have been floated. The parent element will then extend
+  down to contain the cleared element and encompass the floats.
+- In order to avoid the addition of an additional element to the HTML, you can use
+  pseudo-elements instead.
+- A common approach is to use add a class often called "clearfix" to the parent
+  element, with the following pseudo-element definition:
+
+    .clearfix::after {
+      display: block;
+      content: " ";
+      clear: both;
+    }
+
+- Another common variant of this clearfix definition, is to set the display type
+  to "table" in order to contain the margins of non-floated elements (such as
+  headings etc), which would otherwise collapse outside the container. e.g.
+
+    .clearfix::before,
+    .clearfix::after {
+      display: table;
+      content: " ";
+    }
+
+    .clearfix::after {
+      clear: both;
+    }
+
+  - Here pseudo-elements are added ::before and ::after the parent container with a
+    display property of table to contain the margins, and the clear property is
+    set for the ::after pseudo-element to encompass the floats.
+
+# Unexpected "float catching"
+- The manner in which elements floated to the same side are positioned by the
+  browser can lead to some unexpected results.
+- In a scenario involving 3 elements, the 1st of which is taller than the other 2,
+  and all 3 are floated to the left; the 1st element will be positioned top-left,
+  with the 2nd element next to it on the right. The unexpected result is that
+  instead of being positioned beneath the 1st, the 3rd element will be positioned
+  beneath the 2nd as if it has been caught by the bottom of the 1st element.
+- This behavious is seen because the browser will always attempt to place the
+  elements as high up on the page as possible, even if this results in them being
+  further right when floated left (or further left when floated right).
+- In order to get around this behaviour when wishing to position elements in rows
+  of two columns, you will need set the clear property for odd numbered elements.
+  e.g.
+
+    .media {
+      float: left;
+      width: 50%;
+      padding: 1.5em;
+      background-color: #eee;
+      border-radius: 0.5em;
+    }
+
+    .media:nth-child(odd) {
+      clear: left;
+    }
+
+  - Here the :nth-child() selector has been used to target only media elements that
+    are odd numbered children of their parent.
+  - If you wanted 3-column rows you could use :nth-child(3n+1) instead.
+
+# Block formatting context
+- If you wish to prevent the contents of sibling to a floated element wrapping
+  around the floated element (which is the default behaviour), you can establish a
+  block formatting context (BFC). This will isolate the contents from the outside
+  context of the page, and achieving the following three things:
+  - It contains the top and bottom margins of all elements within it. They won't
+    collapse with margins of elements outside the block formatting context.
+  - It contains all floated elements within it.
+  - It doesn't overlap with floated elements outside the BFC.
+- A block formatting context can be achieved in several ways. Applying any of the
+  following property values to an element triggers one:
+  - float: left or float: right - anything but none.
+  - overflow: hidden, auto, or scroll - anything but visible.
+  - display: inline-block, table-cell, table-caption, flex, inline-flex, grid, or
+    inline-grid - these are called block containers.
+  - position: absolute or position: fixed.
+- Using overlow: auto for the BFC is generally the simplest approach. e.g.
+
+  .media-image {
+    float: left;
+    margin-right: 1.5em;
+  }
+
+  .media-body {
+    overflow: auto;
+    margin-top: 0;
+  }
+
+  - Here the overflow: auto property setting establishes a BFC within the media-
+    body, preventing the contents wrapping around the media-image element.
+
+# Building a grid system
+- A grid system similar to those provided by popular CSS frameworks, featuring rows
+  of up to 12 columns, can be constructed using the following CSS:
+
+    .row {
+      /* Negative margins remove padding from ends of row created by column
+       * gutters. */
+      margin-left: -0.75em;
+      margin-right: -0.75em;
+    }
+
+    /* Replicates clearfix so row contains its floated columns. */
+    .row::after {
+      content: " ";
+      display: block;
+      clear: both;
+    }
+
+    /* Attribute selector targets all columns. */
+    [class*="column-"] {
+      float: left;
+      padding: 0 0.75em;  /* Adds gutters between columns. */
+      margin-top: 0;
+    }
+
+    /* Column width classes calculated as a fraction of 12. */
+    .column-1 { width: 8.3333%; }
+    .column-2 { width: 16.6667%; }
+    .column-3 { width: 25%; }
+    .column-4 { width: 33.3333%; }
+    .column-5 { width: 41.6667%; }
+    .column-6 { width: 50%; }
+    .column-7 { width: 58.3333%; }
+    .column-8 { width: 66.6667%; }
+    .column-9 { width: 75%; }
+    .column-10 { width: 83.3333%; }
+    .column-11 { width: 91.6667%; }
+    .column-12 { width: 100%; }
