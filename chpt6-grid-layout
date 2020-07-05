@@ -1,0 +1,92 @@
+# Chapter 5: Grid layout
+
+# Introduction
+- The CSS grid lets you define a two-dimensional layout of columns and rows and then
+  place elements within the grid. Some elements may only fill one cell of the grid;
+  others can span multiple columns or rows.
+- The size of the grid can be defined precisely, or you can allow it to
+  automatically size itself as needed to fit the contents within. You can place
+  items precisely within the grid, or allow them to flow naturally to fill in the
+  gaps.
+- Much like flexbox, a grid layout consists of a grid container and grid items,
+  which are the direct descendants of the container.
+- To define a grid container, you simply set display: grid; for the element. The
+  container behaves like a block display element, filling 100% of the available
+  width.
+- Within the container rules, you can also use the properties grid-template-columns
+  and grid-template-rows to define the size of each of the columns and rows in the
+  grid. e.g.
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+    }
+
+  - The column widths and row heights are defined in fractional units, which behave
+    similarly to the integer values used with flex-grow. This example will create a
+    grid with 3 equal width columns and 2 equal height rows.
+  - You don't have to use fractional units. You could instead use fixed size values
+    in px or any other unit suitable for width or height. e.g. grid-template-
+    columns: 300px 1fr;
+- The grid-gap property defines the amount of space to add to the gutter between
+  each grid cell. e.g. grid-gap: 0.5em 1em;
+
+# Anatomy of a grid
+- Key terms:
+  - Grid line: These make up the structure of the grid. A grid line can be vertical
+    or horizontal and lie on either side of a row or column. The grid-gap, if
+    defined, lies atop the grid lines.
+  - Grid track: A grid track is the space between two adjacent grid lines. A grid
+    has horizontal tracks (rows) and vertical tracks (columns).
+  - Grid cell: A single space on the grid, where a horizontal grid track and
+    vertical grid track overlap.
+  - Grid area: A rectangular area on the grid made up by one or more grid cells. The
+    area is between two vertical grid lines and two horizontal grid lines.
+- In addition to providing explicit template values to grid-template-rows/columns,
+  you can also provide "auto" which allows the track size to grow as necessary to
+  the size of its content. e.g. grid-template-rows: auto auto auto auto;
+- Repeating patterns can also be defined using the repeat() function, which takes an
+  integer specifying the number of repeats as the first parameter, and the pattern
+  to repeat as the second. e.g.
+
+    grid-template-columns: repeat(4, auto); => auto auto auto auto;
+    grid-template-columns: repeat(3, 2fr 1fr); => 2fr 1fr 2fr 1fr 2fr 1fr;
+    grid-template-columns: 1fr repeat(3, 3fr) 1fr; => 1fr 3fr 3fr 3fr 1fr;
+
+# Numbering grid lines
+- The browser assigns numbers to each grid line in a grid, starting from 1 at the
+  top left. Negative numbers can also be used starting from -1 bottom right.
+- You can use the grid numbers to indicate where to place each grid item using the
+  grid-column and grid-row properties. e.g.
+
+    .main {
+      grid-column: 1 / 2;
+      grid-row: 3 / 5;
+    }
+
+  - Here the main class spans the first column which is between grid lines 1 and 2,
+    and the third and fourth rows, which lie between grid lines 3 and 5.
+- You can also specify grid-row and grid-column using a special keyword, span, which
+  tells the browser that the item will span one grid track. e.g.
+
+    nav {
+      grid-column: 1 / 3;
+      grid-row: span 1;
+    }
+
+- If explicit line numbers are not provided, the grid item will be placed
+  automatically using the grid item placement algorithm. This algorithm will
+  position items to fill teh first available space on the grid where they fit.
+
+# Working together with flexbox
+- The two layout methods have two important distinctions which can be used to help
+  determine when it is appropriate to use one or the other method:
+  - Flexbox is basically one-dimensional, whereas grid is two-dimensional.
+  - Flexbox works from the content out, whereas grid works from the layout in.
+- As a general rule: when your design calls for an alignment of items in two
+  dimensions, use grid. When you're only concerned with one-directional flow, use
+  flexbox.
+- In practice, this will often (but not always) mean grid makes the most sense for
+  a high-level layout the page, and flexbox makes more sense for certain elements
+  within each grid area.
