@@ -90,3 +90,134 @@
 - In practice, this will often (but not always) mean grid makes the most sense for
   a high-level layout the page, and flexbox makes more sense for certain elements
   within each grid area.
+
+# Alternative syntaxes
+## Naming grid lines
+- It's possible to name the grid lines between grid tracks and then define the
+  grid columns/rows using them. e.g.
+
+    grid-template-columns: [start] 2fr [center] 1fr [end];
+    ...
+    grid-column: start / center;
+
+  - The three grid lines for this two column grid - start, center, end - are written
+    in [square brackets].
+  - A column is defined, spanning the first grid track, using the grid line names
+    start and center (without square brackets).
+- You can use multiple names for the same line, and use any of them when defining
+  the grid columns/rows. There's also a neat trick that can be performed by adding
+  "-suffixes" to the names. e.g.
+
+    grid-template-columns: [left-start] 2fr
+                           [left-end right-start] 1fr
+                           [right-end];
+    ...
+    grid-column: left;
+    ...
+    grid-column: right;
+
+  - Here multiple names have been assigned to the central grid line allowing either
+    to be used.
+  - The use of -start and -end suffixes allows columns to be defined using just
+    "left" or "right" that span from the -start to -end lines of each.
+- The same name can also be used for more than one line. Where this occurs, a number
+  after the name can be used to specify which one to use. e.g.
+
+    grid-template-rows: repeat(4, [row] auto);
+    ...
+    grid-row: row 3 / span 2;
+
+  - Here the grid lines above each horizontal track of a 4 row grid have been named
+    "row".
+  - A row has been defined, starting from grid "row" 3 and spanning two tracks.
+  - The repeat() pattern can also be used with areas of more than a single track.
+    e.g.
+
+    grid-template-columns: repeat(3, [col] 1fr 1fr);
+    ...
+    grid-column: col 2 / span 2;
+
+  - In this case, a pattern of three repeating pairs of grid tracks is used with the
+    preceeding grid line called "col".
+  - The column definition targets the second pair of repeated grid tracks.
+
+## Naming grid areas
+- In addition to defining grids using named lines, you can also define them using
+  named areas. You still need to define the templates for columns and rows in this
+  case, along with a grid-template-areas definition containing the area names. The
+  items are then positioned in the grid using the grid-area property. e.g.
+
+    .container {
+      display: grid;
+      grid-template-areas: "title title"
+                           "nav   nav"
+                           "main  aside1"
+                           "main  aside2";
+      grid-template-columns: 2fr 1fr;
+      grid-template-rows: repeat(4, auto);
+    }
+
+    header {
+      grid-area: title;
+    }
+
+    nav {
+      grid-area: nav;
+    }
+
+    .main {
+      grid-area: main;
+    }
+
+    .sidebar-top {
+      grid-area: aside1;
+    }
+
+    .sidebar-bottom {
+      grid-area: aside2;
+    }
+
+  - Here a 4 x 2 grid has been divided up into "title", "nav", "main", "aside1" and
+    "aside2" areas. Elements have then been positioned within these areas simply
+    using the area names.
+- You can leave a cell within the grid empty, by using a period "." as its name.
+  e.g.
+
+    grid-template-areas: "top  top    right"
+                         "left .      right"
+                         "left bottom bottom";
+
+# Explicit and implicit grid
+- When an item is placed outside the declared grid tracks, implicit tracks will be
+  added to the grid until it can contain the item.
+- By default, implicit grid tracks will have a size of auto, meaning they'll grow to
+  the size necessary to contain the grid item contents.
+- The properties grid-auto-columns and grid-auto-rows can be applied to the grid
+  container to specify a different size for all implicit grid tracks. e.g.
+
+    .portfolio {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-auto-rows: 1fr;
+      grid-gap: 1em;
+    }
+
+  - Here the repeat() function has been used with auto-fill and minmax() to specify
+    that the grid should add as many vertical tracks as it can, with a minimum width
+    of 200px and a maximum width of 1fr.
+  - If there aren't enough items to fill all the grid tracks created using
+    auto-fill, you can instead used auto-fit, which will stretch non-empty tracks
+    to fill the available space. For this reason auto-fit is often preferable.
+  - The grid-auto-rows property is used to give rows equal height.
+- When you don't specifically position items on a grid, they are positioned auto-
+  matically by the grid item placement algorithm. By default, this algorithm places
+  grid items column by column, row by row, according to the order of the items in
+  the markup.
+- When an item doesn't fit in one row (that is, it spans too many grid tracks), the
+  algorithm moves to the next row, looking for space large enough to accommodate the
+  item.
+- If you items of differing size, there may be some gaps in the grid, depending on
+  the ordering of the items. The grid-auto-flow property can be used to manipulate
+  the behaviour of the placement algorithm to try and fill these gaps. For example,
+  using the value grid-auto-flow: dense; will cause the algorithm to reorder
+  the items if necessary to fill gaps created by larger items.
