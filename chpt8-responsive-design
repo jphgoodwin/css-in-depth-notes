@@ -1,0 +1,108 @@
+# Chapter 8 - Responsive design
+
+# Mobile first
+- A key principle of responsive design is to take a mobile first approach. This is
+  because the content shown on small screened devices will be the most cut-down and
+  minimal.
+- In many cases, the natural flow of the HTML will provide the layout for you as it
+  generally consists of a single column.
+- The richer content and layout seen on larger screen sizes can then be applied
+  using @media queries.
+- On mobile devices, the header menu of the page will usually be hidden by default
+  with a "hamburger" button to open it when required. When displayed, the menu will
+  flow vertically rather than horizontally as it would on larger screens.
+- There are typically 2 breakpoints at which the page layout will change. These are
+  the transition from small to medium and medium to large sized screens.
+- In order for your browser to appropriately layout your webpage for a mobile device
+  you must include a viewport meta tag in the <head> of your HTML. e.g.
+
+    <head>
+      ...
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+
+  - The content attribute indicates two things:
+    - First, it tells the browser to use the device width as the assumed width when
+      interpreting the CSS, instead of pretending to be a full size desktop browser.
+    - Second, it uses initial-scale to set the zoom level at 100% when the page
+      loads.
+- It's advisable to use ems for media query breakpoints as this will allow the page
+  to respond should the user zoom or change the default font size. e.g.
+
+    @media (min-width: 35em) {
+      .title {
+        ...
+      }
+    }
+
+    @media (min-width: 50em) {
+      .title {
+        ...
+      }
+    }
+
+  - Here a min-width of 35em (~560px) is used to target medium sized devices, while
+    a min-width of 50em is used to target larger sized devices.
+- When choosing breakpoints, it's better to visually decide where the breakpoint
+  should be rather than targetting specific devices as there are simply too many.
+
+# Dealing with tables
+- Tables can be problematic for mobile devices due to the restrictions of screen
+  width. Therefore it is best to avoid their use with mobile devices if at all
+  possible.
+- If you must use a table, you can force it to display as normal block elements
+  that can be arranged in a single column. e.g.
+
+    table {
+      width: 100%;
+    }
+
+    @media (max-width: 30em) {
+      table, thead, tbody, tr, th, td {
+        display: block;
+      }
+
+      thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+      }
+
+      tr {
+        margin-bottom: 1em;
+      }
+    }
+
+  - The table rows and cells have been forced to display as block elements on
+    devices less than 30em in width.
+  - The heading row has been positioned off screen so it is effectively hidden,
+    while still being present for screen readers.
+
+# Responsive images
+- For images included via CSS (e.g. background images) you can use media queries
+  to ensure the correct sized image is loaded. e.g.
+
+    .hero {
+      ...
+      background-image: url(coffee-beans-small.jpg);
+    }
+
+    @media (min-width: 35em) {
+      .hero {
+        ...
+        background-image: url(coffee-beans-medium.jpg);
+      }
+    }
+
+    @media (min-width: 50em) {
+      .hero {
+        ...
+        background-image: url(coffee-beans.jpg);
+      }
+    }
+- When including images via the HTML <img> tag you can use the srcset attribute to
+  specify the URLs images to use at each width. e.g.
+
+    <img srcset="coffee-beans-small.jpg 560w,
+                 coffee-beans-medium.jpg 800w,
+                 coffee-beans.jpg 1280w"/>
