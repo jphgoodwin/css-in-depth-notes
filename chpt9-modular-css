@@ -1,0 +1,209 @@
+# Chapter 9 - Modular CSS
+
+# Base styles
+- Generally a page will have some base styles that are applicable to all modules.
+  Examples of these could be:
+
+    :root {
+      box-sizing: border-box;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: inherit;
+    }
+
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+    }
+
+# Modules
+- Modules are defined as classes which can be added to elements that require them.
+  It's important that selectors use a single class name rather than a hierarchy that
+  ties it into a specific location. Otherwise, there using the module elsewhere will
+  require duplication of code. e.g.
+
+    .message {
+      ...
+    }
+
+    vs
+
+    #sidebar .message {
+      ...
+    }
+
+  - In the latter case, the module rules only apply if the message class is added to
+    an element in the sidebar. To use it elsewhere you'd need to write another
+    ruleset.
+
+## Variations of a module
+- Module modifiers, written with a double hyphen "--", are a way to alter the
+  module for different circumstances. To use them you apply both the base module and
+  the modifier to an element. e.g.
+
+    .message {
+      padding: 0.8em 1.2em;
+      border-radius: 0.2em;
+      border: 1px solid #265559;
+      color: #265559;
+      background-color: #e0f0f2;
+    }
+
+    .message--success {
+      color: #2f5926;
+      border-color: #2f5926;
+      background-color: #cfe8c9;
+    }
+
+    .message--warning {
+      color: #594826;
+      border-color; #594826;
+      background-color: #e8dec9;
+    }
+
+    .message--error {
+      color: #59262f;
+      border-color: #59262f;
+      background-color: #e8c9cf;
+    }
+
+  - Here you can see three modifier classes that change the color, border-color, and
+    background-color to reflect three different message scenarios: success, warning,
+    and error.
+
+## Modules with multiple elements
+- For all but the simplest modules you'll need to define classes for multiple
+  elements. The class names for these elements should include the module name
+  separated from its unique name within the module by double underscores "__". e.g.
+
+    .media {
+      padding: 1.5em;
+      background-color: #eee;
+      border-radius: 0.5em;
+    }
+
+    .media::after {
+      content: "";
+      display: block;
+      clear: both;
+    }
+
+    .media__image {
+      float: left;
+      margin-right: 1.5em;
+    }
+
+    .media__body {
+      overflow: auto;
+      margin-top: 0;
+    }
+
+  - Here you can clearly see that the image and body elements are descendents of the
+    media element, without the need of descendant selectors.
+- While you should not allow any external context to change properties within the
+  module, it is fine to combine module variant and sub-elements in a selector. e.g.
+
+    .media--right > .media__image {
+      float: right;
+    }
+
+# Modules composed into larger structures
+- Modules should ideally be responsible for only a single thing. Larger components
+  should be decomposed into multiple smaller modules that each target a single
+  aspect of the larger component. These smaller modules can then also be reused in
+  other components due to their being contextless.
+- An example of such a component could be a dropdown menu, which can be decomposed
+  into a dropdown module and a menu module. This allows you to swap out the menu
+  with another design without altering the dropdown module, or use the dropdown
+  module in another context where the content is something other than a menu. e.g.
+
+    .dropdown {
+      display: inline-block;
+      position: relative;
+    }
+
+    .dropdown__toggle {
+      padding: 0.5em 2em 0.5em 1.5em;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      background-color: #eee;
+    }
+
+    .dropdown__toggle::after {
+      content: "";
+      position: absolute;
+      right: 1em;
+      top: 1em;
+      border: 0.3em solid;
+      border-color: black transparent transparent;
+    }
+
+    .dropdown__drawer {
+      display: none;
+      position: absolute;
+      left: 0;
+      top: 2.1em;
+      min-width: 100%;
+      background-color: #eee;
+    }
+
+    .dropdown.is-open .dropdown__toggle::after {
+      top: 0.7em;
+      border-color: transparent transparent black;
+    }
+
+    .dropdown.is-open .dropdown__drawer {
+      display: block;
+    }
+
+    .menu {
+      margin: 0;
+      padding-left: 0;
+      list-style-type: none;
+      border: 1px solid #999;
+    }
+
+    .menu > li +  li {
+      border-top: 1px solid #999;
+    }
+
+    .menu > li > a {
+      display: block;
+      padding: 0.5em 1.5em;
+      background-color: #eee;
+      color: #369;
+      text-decoration: none;
+    }
+
+    .menu > li > a:hover {
+      background-color: #fff;
+    }
+
+# State classes
+- State classes are designed to be added or removed dynamically using JavaScript to
+  change the state of a module. They are usually prefixed with an is- or has-, e.g.
+  is-open, is-expanded, is-loading, has-error. You can see the use of is-open with
+  the dropdown module, where it is used to define the appearence of the dropdown__
+  toggle and dropdown__drawer when the dropdown is open.
+
+# Utility classes
+- Classes that do one simple and very specific thing to an element, they are called
+  utility classes. Often you will use !important to make their rules override any
+  other definitions. e.g.
+
+    .text-center {
+      text-align: center !important;
+    }
+
+    .float-left {
+      float: left;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+  - These classes each target a specific property of the element to which they're
+    assigned.
