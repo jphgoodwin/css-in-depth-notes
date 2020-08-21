@@ -1,0 +1,160 @@
+# Chapter 10 - Pattern libraries
+
+- A pattern library or style guide is a set of documents providing an inventory of
+  the modules available in a stylesheet. They are commonly used on large projects
+  that have many pages.
+- There are many tools available to help build pattern libraries the most popular of
+  which is arguably KSS.
+
+# KSS
+- KSS works by extracting information and code snippets from comments in the CSS
+  files and building a set of HTML documentation from them that can be viewed in
+  your browser.
+- KSS can be installed as a Node package using: npm install --save-dev kss
+- It requires a JSON configuration file containing paths to the source and
+  destination directories, as well as the location of the css and js files used by
+  code snippets in the documentation. e.g.
+
+    {
+      "title": "My pattern library",
+      "source": [
+        "./css"
+      ],
+      "destination": "docs/",
+      "css": [
+        "../css/styles.css"
+      ],
+      "js": [
+        "../js/docs.js"
+      ]
+    }
+
+- The documentation can be built using the command: kss --config kss-config.json
+- A KSS comment consists of: a title; description; Styleguide annotation specifying
+  where the module belongs in the table of contents; and optionally some markup
+  providing an example use of the module. e.g.
+
+    /*
+    Media
+
+    Displays images and/or body content beside one another.
+
+    Markup:
+    <div class="media">
+      <img class="media__image" src="http://placehold.it/150x150"/>
+      <div class="media__body">
+        <h4>Strength</h4>
+        <p>
+          Strength training is an important part of injury prevention.
+          Focus on your core&mdash; especially your abs and glutes.
+        </p>
+      </div>
+    </div>
+    <div class="media">
+      <img class="media__image" src="http://placehold.it/150x150"/>
+      <div class="media__body">
+        <h4>Strength</h4>
+        <p>
+          Strength training is an important part of injury prevention.
+          Focus on your core&mdash; especially your abs and glutes.
+        </p>
+      </div>
+      <img class="media__image" src="http://placehold.it/150x150"/>
+    </div>
+
+    Styleguide Media
+    */
+
+- For modifier classes, you can use {{modifier_class}} in the markup to indicate
+  where the modifier class should be inserted, and then list the available modifier
+  classes along with a description. e.g.
+
+    Markup:
+    <button class="button {{modifier_class}}">
+      click here
+    </button>
+
+    .button--success  - A green success button
+    .button--danger   - A red danger button
+    .button--small    - A small button
+    .button--large    - A large button
+
+- To add a homepage to your pattern library, simply add a homepage.md file to the
+  directory containing the KSS config file. This homepage file is laid out using
+  standard markdown formatting.
+- Modules can be grouped into sections by adding common prefixes to the module
+  names in the Styleguide annotation. e.g. Styleguide Utilities.clearfix
+  Here the clearfix module is specified as being a subsection of the Utilities
+  section of modules.
+- Subsections are separated by periods and can be up to 3 levels deep (e.g.
+  Utilities.alignment.text-center).
+- By default, sections of a KSS pattern library are ordered alphabetically, as are
+  subsections within a section. You can change this by using the Weight annotation.
+  Higher weights are placed closer to the bottom than lower weights. e.g.
+
+    /*
+    Float left
+
+    Float an element to the left with `float-left`
+
+    Weight: 3
+
+    Styleguide Utilities.float-left
+    */
+
+    /*
+    Clearfix
+
+    Add the class `clearfix` to an element to force it to contain its floated
+    contents
+
+    Markup:
+    <div class="clearfix">
+      <span class="float-left">floated</span>
+    </div>
+
+    Weight: 2
+
+    Styleguide Utilities.clearfix
+    */
+
+# Using a CSS First workflow
+- With larger projects taking a CSS First approach to development can be beneficial
+  for ensuring code quality, consistency and reusability.
+- With a CSS First approach, you write your CSS modules before writing the HTML of
+  individual pages. You can, and should, develop your CSS within the confines of the
+  pattern library before putting those styles to use in your project, so your
+  development process will look something like this:
+  - When building a page, have a sketch or mockup or some general idea of what that
+    page should look like.
+  - Go to the pattern library. Look for existing modules that provide what you need
+    for your page, and use them. Start from the outside (main page layout and
+    containers) and work your way in. If you can construct your entire page using
+    existing modules, do it. You won't need to write any new CSS.
+  - Occassionally, you'll find you need something the pattern library doesn't
+    provide. This will happen a lot early in the life of the project, but much less
+    later on. You'll need to build a new modules or modules, or a new variant for an
+    existing module. Set aside the page you're wokring on, and build it within the
+    pattern library. Document it and make sure it looks and behaves like you expect.
+  - Go back to your page and, using the new stylesheet, add the new module(s) to
+    your page.
+
+# Using a pattern library as an API
+- When you use a pattern library, you're documenting an API for interfacing with
+  your CSS. Each module comes with some class names and a small bit of DOM
+  structure. As long as the relevant portion of HTML follows this structure, the
+  stylesheet will style it correctly.
+- When adding new functionality to a module it's important to ensure the previous
+  code snippets in the pattern library still run (the API is not broken) and
+  possibly leave them in as kind of regression test alongside a snippet that
+  illustrates the new module functionality. (see Media example at top of page)
+- When making changes to your pattern library it is a good idea to indicate the
+  library version using semver notation (major.minor.patch). The version field in
+  the package.json file provides a convenient means of doing so.
+
+# Frameworks
+- When considering popular frameworks like Bootstrap it is better to copy individual
+  modules (if their license permits this) that you require and paste them into your
+  pattern library, than to import the entire framework just for a few modules.
+- Creating your own pattern library and styles is better for creating a style
+  tailored to your website's brand, rather than the generic look of a framework.
