@@ -1,0 +1,144 @@
+# Chapter 11 - Backgrounds, shadows, and blend modes
+
+# Gradients
+- Gradients can be added as background images to an element using the built-in
+  gradient functions.
+- The linear-gradient() function has three parameters defining its behaviour: angle,
+  starting color, and ending color. e.g.
+
+    .fade {
+      ...
+      background-image: linear-gradient(to right, white, blue);
+    }
+
+  - Here the value "to right" has been used as the angle, "white" as the starting
+    color, and "blue" the ending color.
+- Colors can be specified in any of the usual ways (hex, rgb(), etc).
+- Angles can be specified as a written direction "to bottom right", or as a number
+  in any of the following units: deg(rees), rad(ians), turn(s around a circle), and
+  grad(ians).
+- It's possible to define gradients with more than two colors by simply adding more
+  colors to the gradient function. e.g. linear-gradient(90deg, red, white, blue);
+- By default, the gradient function will evenly space the color stops, but it's also
+  possible to position them explicitly by providing a length value in any valid
+  length unit (%, px, em, etc) with each color stop value. e.g.
+
+    linear-gradient(90deg, red 0%, white 70%, blue 100%);
+
+- If adjacent color stops have the same position value, the gradient will transition
+  immediately from one color to the other, creating a stripe effect. e.g.
+
+    linear-gradient(180deg, red 40%, white 40%, white 60%, blue 60%);
+
+  - This example will have create three horizontal stripes with colors red, white
+    and blue starting from the top.
+- The repeating-linear-gradient() function can be used to create repeating striped
+  patterns, for example a diagonally striped bar that be used as a progress bar:
+
+    .fade {
+      height: 1em;
+      width: 400px;
+      background-image: repeating-linear-gradient(-45deg, #57b, #57b 10px,
+        #148 10px, #148 20px);
+      border-radius: 0.3em;
+    }
+
+  - Here we define a bar with horizontal stripes of width 10px, alternating in
+    color between two shades of blue (#57b and #148).
+- Radial gradients can also be defined that start at a single point and proceed
+  outward in all directions using the radial-gradient() function. e.g.
+
+    background-image: radial-gradient(white, blue);
+
+  - Here we define a gradient that proceeds outward from the center of the element
+    starting as white and transitioning to blue.
+- By default, the gradient is centered in the element, transitioning evenly to its
+  corners. It is elliptical in shape, matching the proportions of the element(wider
+  for wide elements, taller for tall elements). You can alter this behaviour to make
+  it circular by providing the value "circle" as the first argument to the radial-
+  gradient() function, or explicitly define the position of the gradient.
+  e.g.
+
+    radial-gradient(circle, white, midnightblue);
+
+    radial-gradient(circle at 25% 25%, white, midnightblue);
+
+  - In the first example we've defined a circular gradiant that starts at the center
+    of the element as white and proceeds uniformly to midnight blue.
+  - In the second example we've defined a circular gradient positioned in the top-
+    left corner of the element.
+- All of the color stop settings supported for linear gradients are also supported
+  for radial gradients, and there is similarly a repeating-radial-gradient()
+  function, allow you to define patters of concentric rings.
+
+# Shadows
+- Shadows can be used to add perceived depth to a page. Two properties that create
+  shadows are box-shadow, which creates a shadow of an element's box shape, and
+  text-shadow, which creates a shadow of rendered text.
+- To define a box-shadow, the three required values are: horizontal offset (x),
+  vertical offset (y), and color. There are two other values that can optionally be
+  added, namely: blur radius and spread radius. e.g.
+
+    box-shadow: 2px 2px 2px 1px black;
+
+  - Here the first two values are the x-offset and y-offset; the third
+    and fourth values are the blur and spread radius; and the last value is the
+    color.
+- The blur radius controls how much the edges of the shadow are to blurred. Providing
+  a blur radius value will give the shadow a softer, slightly transparent edge.
+- The spread radius controls the size of the shadow. A positive spread radius makes
+  the shadow larger in all directions; a negative value makes the shadow smaller.
+- Shadows can be used to give the effect of a button sticking out of the page before
+  being clicked, and then sinking into the page as the user clicks it. This sort of
+  design, where onscreen elements were made to resemble real-world counterparts
+  (known as skeuomorphism) was popular for several years in the early 2000s.
+- Since then it has given way to flat design, commonly seen in Google's web apps,
+  where solid pastel colours are used and shadows/gradients are subtle when employed.
+- The most recent trend is somewhat a middle ground between the approaches that
+  preceeded it. Gradients are still subtle and shadows are larger but dispense with
+  blur in order to give buttons a more solid 3D appearance that doesn't simulate
+  real-life lighting. e.g.
+
+    .button {
+      padding: 0.8em;
+      border: 0;
+      font-size: 1rem;
+      color: white;
+      border-radius: 0.5em;
+      background-color: #57b;
+      box-shadow: 0 0.4em #148;
+      text-shadow: 1px 1px #148;
+    }
+
+    .button:active {
+      background-color: #456ab5;
+      transform: translateY(0.1em);
+      box-shadow: 0 0.3em #148;
+    }
+
+  - These styles define a blue button, with a solid box-shadow on its lower edge
+    in a darker shade of blue that makes it appear like the side of the box rather
+    than its shadow.
+  - When active, the button is moved down 0.1em using a transform and simultaneously
+    the height of the box-shadow is reduced; the result is the appearance of the
+    button being depressed.
+
+# Blend modes
+- CSS allows you to blend multiple background images together by providing them in
+  a comma separated list. e.g.
+
+    background-image: url(bear.jpg), linear-gradient(to bottom, #57b, #148);
+
+- When multiple images are provided like this, multiple comma separated values can
+  be provided to the background-size, -repeat, and -position properties in order to
+  independently set values for each image. Alternatively, a single value can be
+  applied to all images.
+- How these images are blended is controlled by the background-blend-mode property.
+  It supports a number of different effects that can be divided into 5 categories:
+  darken, lighten, contrast, composite, and comparative.
+- Use cases for these effects include:
+  - Tinting an image with a single color or gradient.
+  - Applying texture to an image, such as a scratched or grainy film reel look.
+  - Lighten, darken, or reduce the contrast of an image so the text in front of it
+    is more readable.
+  - Overlay a text banner while still allowing the image to show through.
