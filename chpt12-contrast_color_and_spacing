@@ -1,0 +1,54 @@
+# Chapter 12 - Contrast, color, and spacing
+
+# Contrast is king
+- Contrast in design is a means of drawing attention to something by making it stand
+  out. Our eyes and our minds naturally find patterns. When something breaks a
+  pattern, our attention goes right to it. For contrast to work, the page must
+  establish patterns; you cannot have an exception to the rule unless you first have
+  a rule.
+- Using modules that are shared by multiple elements on the page helps to establish
+  the patterns with which to contrast.
+- Contrast can be created using color, spacing, or size. If several items are light,
+  but one is dark, you'll notice the dark item first. When one item is surrounded by
+  a lot of unused space, it stands out. Large elements also stand out amid a series
+  of smaller ones. Combining one of more of these effects can amplify the contrast.
+- Often pages will have a Call to Action (CTA) element, which is the key element you
+  want the user to interact with and draws their attention by having the greatest
+  contrast to its surroundings.
+- Sections of the page like the footer, will often feature the lowest contrast
+  between text and the background on the page, so it doesn't draw the user's
+  attention away from the other sections of the page.
+
+# Color
+- The color palette for a page will typically have one primary color that everything
+  else is based on. It is often derived from the corporate branding or logo.
+- The colors of the palette will often be varying shades of the same hue, or
+  complementary colors to it.
+- There will also probably be a black, a white, and a handful of grays defined in
+  the palette. Due considerations of eye strain, the black and white will often be
+  shades of gray in order to reduce the contrast a little.
+- Assigning these colors to variables will allow them to be easily reused and
+  changed should the design change down the line.
+- With hexadecimal and rgb notation it can be hard to picture the colours being
+  defined, or adjust them. HSL notation which uses hue, saturation, and luminosity
+  values can often be better; it's easier to guess the color from the definition and
+  also to choose colors with the same or complementing hues that will work well
+  together in a palette.
+- The hsl() function takes three values. The first value, representing hue, is an
+  integer between 0 and 359. This indicates the 360 degrees around the color circle,
+  transitioning evenly through red (0), yellow (60), green (120), cyan (180), blue
+  (240), magenta (300), and back to red. The second value, representing saturation,
+  is a percentage defining the intensity of the color: 100% makes the color vivid,
+  and 0% means no color is present, resulting in a shade of gray. The third value,
+  representing lightness, is a percentage defining how light (or dark) the color is.
+  A lightness of 50% provides for the most vivid colors - setting it higher makes
+  the color lighter, with 100% resulting in pure white; setting it lower makes the
+  color darker, with 0% resulting in black. e.g. hsl(198, 73%, 46%);
+- To find a color's complement you can simply add (or subtract) 180 to (or from) the
+  hue value. e.g the complement of 162 is 342 (or -18).
+- If there is insufficient contrast between colors they can be difficult to read.
+  The Web Content Accessibility Guidelines (WCAG) provide provide a minimum
+  recommended contrast ratio (called level AA) and a stricter, enhanced contrast
+  ratio (called level AAA). To account for the difference in legibility of larger
+  and regular sized text, both levels provide different ratios for the two text
+  sizes, the larger size having a smaller ratio.
