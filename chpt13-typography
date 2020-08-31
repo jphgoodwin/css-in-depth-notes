@@ -1,0 +1,89 @@
+# Chapter 13 - Typography
+
+# Web fonts
+- The easiest and most common way to use web fonts is through an online service,
+  such as Google Fonts: https://fonts.google.com/
+- Google Fonts allows you to browse through a wide selection of freely available
+  fonts and select the font-families and font-weights you wish to use, for which it
+  then provides an embeddable link. This link can then be placed in the <head>
+  section of your html page to load the font. e.g.
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&family=Sansita:wght@800&display=swap" rel="stylesheet">
+
+- In order to reduce the loading time, you can select only the font-weights you need
+  for your page, rather than all the weights and styles available.
+- Once the link has been added to the page, these fonts can be used in your page as
+  normal, though only with the weights and styles you specified.
+
+# How @font-face works
+- The font providers (such as Google Fonts) use @font-face rulesets to define the
+  fonts in a CSS.
+- These rulesets use a standard format that looks like the following:
+
+    /* latin */
+    @font-face {
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 300;
+      font-display: swap;
+      src: local('Roboto Light'), local('Roboto-Light'), url(https://fonts.gstatic.com/s/roboto/v20/KFOlCnqEu92Fr1MmSU5fBBc4.woff2) format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
+  - The font-family, font-style, and font-weight definitions are what you use in
+    your stylesheet to apply the font to a given element.
+  - The src property provides a comma separated list of locations for the browser
+    to look when attempting to load the font. The local locations allow for cases
+    where a user may have the desired font installed locally on their system, saving
+    the browser from downloading it from a remote location via the url at the end
+    of the list.
+  - The unicode-range property provides the ranges of characters supported by the
+    font.
+  - The font-display property specifies the desired behaviour if the font can't be
+    loaded immediately - due to a slow internet connection for instance.
+  - The format field within the src property definition specifies the font format
+    that should be used. The latest standard is Web Open Font Format 2 (WOFF2), but
+    not all browsers support this, so it may be necessary to specify links for older
+    font formats such as WOFF in addition to this.
+- It's perfectly possible for you to write your own @font-face rulesets should you
+  wish to host the font on your own servers.
+
+# Adjusting space for readability
+- The default font spacing both horizontally between lines and vertically between
+  individual characters can be a little cramped so may require some adjustment.
+- This can be done using the line-height and letter-spacing properties.
+- A line-height of 1.4 and a letter-spacing of 0.01em is suitable for most fonts,
+  though larger letter-spacings of 0.03em are often appropriate for headings and
+  negative letter-spacings (e.g. -0.02em) for all uppercase text.
+- As line length increases, line-height should be increased in order to allow the
+  reader to better trace the line they're reading.
+
+# FOUT and FOIT
+- Due to the size of font files there can be delays when loading them. The browser
+  generally will take one of two options when rendering the page. It will either
+  present a Flash of Unstyled Text (FOUT), where a fallback font is used initially
+  while the web font loads, or it will render the page with a Flash of Invisible
+  Text (FOIT), where the page is rendered without the text but leaving a space where
+  it should be.
+- For faster connections, FOIT may be the more desirable behaviour, while for
+  slower connections it is better that the user at least has something to read even
+  if it isn't properly styled and so FOUT is more desirable.
+- It's possible to elicit some control over these events by either using a
+  JavaScript library like FontFaceObserver to monitor whether the fonts have loaded
+  successfully and alter the page styles accordingly (use a different font if
+  loading fails rather than browser default), or dictate the desired behaviour with
+  the font-display property in the @font-face ruleset.
+- The font-display property supports the following values:
+  - auto - The default behaviour (a FOIT in most browsers).
+  - swap - Displays the fallback font, then swaps in the web font when it's ready
+    (FOUT).
+  - fallback - A compromise between auto and swap. For a brief time (100ms), the
+    text will be invisible. If the web font isn't available at this point, the
+    fallback font is displayed. Then, once the web font is loaded, it'll be
+    displayed.
+  - optional - Similar to fallback, but allows the browser to decide whether to
+    display the web font based on the connection speed. Typically, this means the
+    web font may not appear at all on slower connections.
+- For fast connections, fallback works best, providing a brief FOIT, but it'll
+  produce a FOUT if the web font takes longer than 100ms to load. For slow
+  connections, swap may be better, rendering the fallback font immediately.
