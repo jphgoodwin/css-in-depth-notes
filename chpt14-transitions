@@ -1,0 +1,123 @@
+# Chapter 14 - Transitions
+
+- The transition-property property specifies which properties to transition. It
+  can accept the name of any property that supports animations or the keyword "all"
+  that applies the transitions to all properties that support them.
+- The other transition properties are transition-duration, transition-timing-
+  function, and transition-delay.
+- transition-duration controls the duration of the transition and takes a value in
+  either seconds of milliseconds e.g. 0.5s or 300ms.
+- transition-delay allows you to specify a delay before beginning the transition,
+  again using units of seconds or milliseconds.
+- transition-timing-function specifies the function used to control the rate of
+  transition. It accepts keyword values including: linear, ease-in which starts slow
+  and then accelerates, and ease-out which starts fast and decelerates, or
+  an explicit function e.g. cubic-bezier(0.45, 0.05, 0.55, 0.95).
+- DevTools features a handy tool for visually defining a bezier curve using control
+  points, which can be used to try out different values before adding them to your
+  stylesheet.
+- As a general rule, these are the scenarios where linear, accelerating and
+  decelerating functions are appropriate, respectively:
+  - Linear - color changes and fade in/out effects.
+  - Decelerating - User-initiated changes. WHen the usesr clicks a button or hovers
+    over an element, use ease-out or something similar. This way, the user will see
+    a fast, instant response to theri input, easing out as the element comes to a
+    stop.
+  - Accelerating - System-initiated changes. When content finishes loading or a
+    timeout event triggers, use ease-in or something similar. This way, the element
+    will ease in at first to draw the user's attention before the element speeds up
+    and completes its motion.
+- The transition shorthand property can be used to set all four transition
+  properties simultaneously. e.g.
+
+    transition: background-color 0.3s linear 0.5s;
+
+  - The values represent the transition-property, -duration, -timing-function, and
+    -delay property values from left to right.
+- Though not commonly used, it's also possible to transition in discrete steps
+  rather than continuously by providing the steps() function as the timing function.
+  This accepts up to two values, the first being the number of steps and the second
+  being whether to transition at the start of end of each step (end is the default).
+    e.g. steps(3, start);
+- In general, transition durations for hover effects, fades, and small scaling
+  effects should be kept below 300ms, as longer durations will make the site appear
+  sluggish.
+- For transitions that involve large moves or complex timing functions, such as
+  bounces, use slightly longer transitions between 300 and 500ms.
+- Some properties that take a keyword or other discrete values like url() can't be
+  animated. The display property is one such property, so transitions can't be used
+  with it to fade in/out an element. Instead, combinations of properties like
+  opacity and visibility can be used to achieve these transition effects. e.g.
+
+    .dropdown__drawer {
+      position: absolute;
+      background-color: white;
+      width: 10em;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s linear,
+                  visibility 0s linear 0.2s;
+    }
+
+    .dropdown.is-open .dropdown__drawer {
+      opacity: 1;
+      visibility: visible;
+      transition-delay: 0s;
+    }
+
+  - Here a delayed transition between visibility hidden and visible is used in
+    combination with a 0.2s linear transition between opacity 0 and 1 to achieve a
+    fade in/out effect.
+  - With opacity alone, the element would still prevent interaction with elements
+    behind it even when fully transparent. Use of visbility alleviates this problem.
+  - Used on its own, visibility can only support delayed instantaneous transitions,
+    so you need the addition of an opacity change to see a fade.
+- Another common effect used with dropdowns is to transition the height from 0 to
+  its desired height when toggling the dropdown. This can be achieved with the
+  following:
+
+    .dropdown__drawer {
+      position: absolute;
+      background-color: white;
+      width: 10em;
+      height: 0;
+      overflow: hidden;
+      transition: height 0.3s ease-out;
+    }
+
+    .dropdown.is-open .dropdown__drawer {
+      height: 20em;
+    }
+
+  - overflow: hidden; is used to keep the dropdown contents hidden when the height
+    of the container is 0.
+- One complication arises if you wish to use a height of "auto" as the transition
+  doesn't know what this is at the time it calculates the interpolated values. To
+  get around this you can use JavaScript to change the height to an explicit value
+  in px when the rendered height of the dropdown contents is known. e.g.
+
+    <script type="text/javascript">
+      (function () {
+        var toggle = document.getElementsByClassName('dropdown__toggle')[0];
+        var dropdown = toggle.parentElement;
+        var drawer = document.getElementsByClassName('dropdown__drawer')[0];
+        var height = drawer.scrollHeight;
+
+        toggle.addEventListener('click', function (e) {
+          e.preventDefault();
+          dropdown.classList.toggle('is-open');
+          if (dropdown.classList.contains('is-open')) {
+            drawer.style.setProperty('height', height + 'px');
+          } else {
+            drawer.style.setProperty('height', '0');
+          }
+        });
+      }());
+    </script>
+
+  - Here the scrollHeight of the dropdown__drawer has been extracted and used to
+    set the height of the dropdown container when the is-open class is added to its
+    classList.
+  - It should be noted that the scrollHeight value is set to 0 when the element is
+    hidden using display: none, so couldn't be used under those circumstances
+    without first setting display to another value like block.
