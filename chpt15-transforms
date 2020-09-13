@@ -1,0 +1,196 @@
+# Chapter 15 - Transforms
+
+- The transform property can be used to distort the shape or position of an element
+  on a page. This can involve rotating, scaling, or skewing the element in two or
+  three dimensions.
+- Transforms are most commonly used in conjuction with transitions and animations in
+  order to make them dynamic.
+- The transform property supports a number of transform functions which fit into the
+  following four categories:
+  - Rotate - Spins the element a certain number of degrees around an axis.
+  - Translate - Moves the element left, right, up, or down (similar to relative
+    positioning).
+  - Scale - Shrinks or expands the element.
+  - Skew - Distorts the shape of the element, sliding its top edge in one direction
+    and its bottom edge in the opposite direction.
+- Here are some examples of these functions in action:
+
+    transform: rotate(30deg);
+    transform: translate(40px, 20px);
+    transform: scale(0.8);
+    transform: skew(15deg);
+
+  - In the first definition, the element is rotated 30 degrees clockwise.
+  - In the second definition, the element is moved 40px to the right and 20px down.
+  - In the third definition, the element is scaled down to 80% of its original size.
+  - In the fourth definition, the element is skewed by 20 degrees.
+- A key thing to note when using transforms is that, while the element may be moving
+  to a new position on the page, it doesn't shift the document flow. You can
+  translate an element all the way across the screen, but its original location
+  remains unoccupied by other elements. Also, when rotating an element, a corner of
+  it may shift off the edge of the screen. Similarly, it could potentially cover up
+  portions of another element beside it.
+- It helps to have a considerable margin around elements you will be transforming in
+  order to provide room for it to expand into without obscuring neighbouring
+  elements.
+- Transforms cannot be applied to inline elements like <span> or <a>. To transform
+  such an element, you must either change the display proeprty to something other
+  that inline (such as inline-block) or change the element to a flex or grid item (
+  apply display: flex or display: grid to the parent element).
+
+# Changing the transform origin
+- A transform is made around a point of origin. This point serves as the axis of
+  rotation, or the spot where scaling or skewing begins.
+- By default, the point of origin is the center of the element, but you can change
+  this with the transform-origin property.
+- The transform-origin can be specified using keywords, percentages or a length
+  unit (px, ems, etc). e.g.
+
+    transform-origin: right center;
+    transform-origin: 100% 50%;
+
+  - Here these two definitions are equivalent with the first value specifying the
+    horizontal position and the second value specifying the vertical position.
+
+# Applying multiple transforms
+- You can specify multiple values for the transform property, each separated by a
+  space. Each transform value is applied in succession from right to left. e.g.
+
+    transform: rotate(15deg) translate(20px, 0);
+
+  - In this example the element is first translated 20px to the right and then
+    rotated 15deg clockwise.
+
+# Transforms in motion
+- When applying transformations to an icon image that will affect the scale of the
+  icon, it's better to use Scalable Vector Graphics (SVGs) instead of raster-based
+  image formats such as GIF, PNG, JPG, as SVGs don't pixelate when enlarged.
+- It's possible to achieve the same effect as the scale transform function by simply
+  increasing an element's height and width. However, this would alter the document
+  flow and thus cause the surrounding elements to move around. Not only is this
+  potentially visually undesirable, it's also less performant. Leaving a sufficient
+  margin around an element and increasing its size using scale() is the prefered
+  approach. This also applies to translations over relative positioning.
+
+# The rendering pipeline
+- After the browser computes which styles apply to which elements on the page, it
+  needs to translate those styles into pixels on the screen. This is the process of
+  rendering, which can be broken down into three stages: layout, paint, and
+  composite.
+- In the first stage, layout, the browser calculates how much space each element is
+  going to take on the screen. The size and position of one element can influence the
+  size and position of countless other elements on the page. Changes to these
+  properties in one element will cause the browser to reflow the page, recomputing
+  the layout of all other elements that are moved or resized as a result of the
+  change.
+- After layout comes painting. This is the process of filling in pixels: text is
+  drawn; images and borders and shadows are all colored. This is not physically
+  displayed on the screen, but rather drawn into memory. Portions of the page are
+  painted into layers.
+- If you change the background color of an element, for instance, it must be
+  repainted. But, because the background color has no impact on the position or
+  sizing of any elements on the page, layout doesn't need to be recalculated to
+  account for this change. Changing a background is less computationally intensive
+  than changing the size of an element.
+- Under the right conditions, an element on the page can be promoted into its own
+  layer. When this happens, it is painted separately from the other layers on the
+  page. Browsers can take this layer and send it to the computer's GPU for rendering,
+  rather than painting it on the main CPU like the main layer.
+- In the composite stage, the browser takes all of the layers that have been painted
+  and draws them into the final image that'll be displayed onscreen. These are drawn
+  in a certain order so that the correct layers appear in front of other layers, in
+  cases where they overlap.
+- Two properties, opacity and transform, when changed, result in a much faster
+  rendering time. When you change one of these on an element, the browser can
+  promote that element to its own paint layer and use GPU acceleration.
+- Performance is particularly important when changes are part of an animation as
+  they need to will need to be repeated with a frequency matching the refresh rate
+  of the monitor (at least 60 times per second) in order appear smooth.
+- With older browsers changes to the opacity or transform properties might not
+  automatically promote the element to its own layer. In these cases you can use the
+  will-change property to explicitly state that these properties will change and
+  enforce promotion of the element to its own layer. e.g. will-change: transform;
+
+# Three-dimensional (3D) transforms
+- Rotation and translation can be performed in all three dimensions: X, Y, and Z.
+- To translate an element in the Z-dimension, you can use the translateZ() function,
+  which moves an element conceptually closer to or further from the user.
+- Rotation is a little different as by default rotation occurs about the Z-axis, i.e.
+  the rotate() function is an alias of rotateZ(). The rotateX() and rotateY()
+  functions can be used to rotate an element about the X or Y axes respectively,
+  causing a resultant movement in the Z-dimension.
+- In order to determine the visual impact of these transformations into the Z-
+  dimension, you must specify the perspective. That is, the distance between the
+  observer and the scene. Moving the observer closer to the scene results in stronger
+  3D effects, while moving the observer further away makes the effects more subtle.
+- You can specify the perspective distance in two ways: using a perspective()
+  transform or using the perspective property. e.g.
+
+    .row {
+      display: flex;
+      justify-content: center;
+    }
+
+    .box {
+      box-sizing: border-box;
+      width: 150px;
+      margin: 0 2em;
+      padding: 60px 0;
+      text-align: center;
+      background-color: hsl(150, 50%, 40%);
+      transform: perspective(200px) rotateX(30deg);
+    }
+
+  VS
+
+    .row {
+      display: flex;
+      justify-content: center;
+      perspective: 200px;
+    }
+
+    .box {
+      box-sizing: border-box;
+      width: 150px;
+      margin: 0 2em;
+      padding: 60px 0;
+      text-align: center;
+      background-color: hsl(150, 50%, 40%);
+      transform: rotateX(30deg);
+    }
+
+  - In the first example, each box has its own perspective so they taper
+    symmetrically.
+  - In the second example, the all boxes share a common perspective as the
+    perspective property has been set on their common row ancestor. This results in
+    a more realistic effect as the boxes lean towards the row center as they taper.
+- In addition to changing the perspective distance, you can also change the
+  perspective origin using the perspective-origin property. e.g.
+
+    .row {
+      display: flex;
+      justify-content: center;
+      perspective: 200px;
+      perspective-origin: left bottom;
+    }
+
+    ...
+
+  - This moves the observer position to the row's bottom left, meaning each box in
+    the previous example will lean to the left as they taper.
+
+# Backface-visibility
+- If you use rotateX() or rotateY() to spin an element more than 90 degrees, the
+  element faces away from you and you see the back of the element. The back-face of
+  the element is a mirror image of the front-face.
+- You can control whether this back-face is visible using the backface-visibility
+  property e.g. backface-visibility: hidden; By default this property is set to
+  visible. If set to hidden the element will not be visible as soon as it rotates
+  more than 90 degrees.
+
+# Transform-style (preserve-3D) property
+- When constructing complex 3D scenes with nested elements it's necessary to set the
+  transform-style property to preserve-3D e.g. transform-style: preserve-3D;
+- Without this, rotating the parent element will result in the appearance that you're
+  rotating a picture of a 3D scene i.e. the 3-dimensionality of the overall scene is
+  lost.
