@@ -1,0 +1,94 @@
+# Chapter 16 - Animations
+
+- Animations are defined using keyframes. In many ways they are similar to
+  transitions, you define a series of keyframes and the browser interpolates all the
+  frames in between. The difference is that animations can feature many keyframes
+  rather than just the start and end frames defined in a transition.
+- Animations in CSS contain two parts: the @keyframes at-rule, which defines an
+  animation, and the animation property, which applies that animation to an element.
+  e.g.
+
+    @keyframes over-and-back {
+      0% {
+        background-color: hsl(0, 50%, 50%);
+        transform: translate(0);
+      }
+      50% {
+        transform: translate(50px);
+      }
+      100 % {
+        background-color: hsl(270, 50%, 90%);
+        transform: translate(0);
+      }
+    }
+
+    .box {
+      width: 100px;
+      height: 100px;
+      background-color: green;
+      animation: over-and-back 1.5s linear 3;
+    }
+
+  - The @keyframes ruleset contains property definitions for a series of keyframes
+    at positions specified with percentage values.
+  - The animation property definition contains a series of parameters: the first
+    is the name of the animation, in this case over-and-back; the second is the
+    duration; the third is the timing function; and the final parameter is the
+    number of times to repeat the animation, in this case 3.
+- The start of an animation can be delayed by defining the animation-delay property
+  for an element, similarly to the transition-delay property. e.g.
+
+    .flyin-grid__item:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+  - This delays the start of the animation for the 3rd flyin-grid__item by 0.3s.
+- If the normal position and styling of an element doesn't match the start or end
+  frames of an animation, there won't be a smooth transition into or out of the
+  transition. This can be corrected using the animation-fill-mode property, which
+  allows you to apply the animation styles from the first frame to an element before
+  the animation begins, or those from the last frame after the animation ends.
+- The default setting for this property is 'none', but it can be set to 'forwards',
+  'backwards' or 'both'. e.g.
+
+    .flyin-grid__item {
+      animation: fly-in 600ms ease-in;
+      animation-fill-mode: backwards;
+    }
+
+  - Here the styles from the first frame of the animation are applied backwards to
+    prevent the element appearing before the fly-in animation starts.
+- JavaScript can be used to trigger animations when a specific event occurs. This
+  is most easily done by adding or removing a class containing the animation to the
+  target element. e.g.
+
+    <script type="text/javascript">
+      var input = document.getElementById('trip');
+      var button = document.getElementById('submit-button');
+
+      var timeout = null;
+
+      button.addEventListener('click', function(event) {
+        event.preventDefault();
+        clearTimeout(timeout);
+        button.classList.add('is-loading');
+        button.disabled = true;
+        input.disabled = true;
+      });
+
+      input.addEventListener('keyup', function() {
+        clearTimeout(timeout);
+        timeout = setTimeout(function () {
+          button.classList.add('shake');
+        }, 1000);
+      });
+      button.addEventListener('animationend', function() {
+        button.classList.remove('shake');
+      });
+    </script>
+
+  - The is-loading class containing a spinner animation is added to button
+    when it is clicked.
+  - On keyup in the input element, the shake class containing an animation that
+    shakes an element left and right several times is added to the button after a
+    1 second delay without a further keyup event, prompting the user to click it.
